@@ -17,17 +17,11 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 package com.mudracr.ui;
 
 import com.mudracr.ui.filtros.FiltroODF;
-import java.awt.Color;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 
 /**
  *
@@ -66,6 +60,7 @@ public class SelectorMultple extends javax.swing.JFrame {
         cmdCancelar = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         listaArchivos = new javax.swing.JList<>();
+        btnEliminar = new javax.swing.JButton();
 
         fcSelectorArchivo.setDialogTitle("Selector de archivos ODF");
         fcSelectorArchivo.setFileFilter(filtroODF);
@@ -135,31 +130,37 @@ public class SelectorMultple extends javax.swing.JFrame {
         listaArchivos.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         jScrollPane1.setViewportView(listaArchivos);
 
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblArchivos)
+                    .addComponent(lblRuta))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblArchivos)
-                            .addComponent(lblRuta))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtRuta, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnEliminar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cmdAceptar)
                         .addGap(3, 3, 3)
-                        .addComponent(cmdCancelar)))
+                        .addComponent(cmdCancelar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txtRuta, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -187,7 +188,8 @@ public class SelectorMultple extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmdAceptar)
-                    .addComponent(cmdCancelar))
+                    .addComponent(cmdCancelar)
+                    .addComponent(btnEliminar))
                 .addContainerGap())
         );
 
@@ -213,6 +215,10 @@ public class SelectorMultple extends javax.swing.JFrame {
     private void txtRutaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRutaKeyPressed
         archivoSeleccionado = null;
     }//GEN-LAST:event_txtRutaKeyPressed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        eliminarSeleccionado();
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**
      * Permite buscar un documento en el sistema de archivos.
@@ -248,7 +254,7 @@ public class SelectorMultple extends javax.swing.JFrame {
             DefaultListModel modelo = (DefaultListModel) listaArchivos.getModel();
             if (!verificarSiAgregado(modelo, archivo)) {
                 modelo.addElement(archivo);
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(this, "El archivo ya fue agregado", "Información", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
@@ -256,7 +262,13 @@ public class SelectorMultple extends javax.swing.JFrame {
         }
     }
 
-    public boolean verificarSiAgregado(DefaultListModel modelo, File archivoAComparar) {
+    /**
+     * Verifica si el archivo ha sido agregado a la lista.
+     * @param modelo El modelo
+     * @param archivoAComparar El archivo a verificar si ya está agregado.
+     * @return 
+     */
+    private boolean verificarSiAgregado(DefaultListModel modelo, File archivoAComparar) {
         for (int i = 0; i < modelo.getSize(); i++) {
             File archivo = (File) modelo.getElementAt(i);
             if (archivo.equals(archivoAComparar)) {
@@ -264,6 +276,17 @@ public class SelectorMultple extends javax.swing.JFrame {
             }
         }
         return false;
+    }
+
+    /**
+     * Elimina el archivo seleccionado de la lista.
+     */
+    private void eliminarSeleccionado() {
+        int indiceSeleccionado = listaArchivos.getSelectedIndex();
+        if (indiceSeleccionado > -1) {
+            DefaultListModel modelo = (DefaultListModel) listaArchivos.getModel();
+            modelo.remove(indiceSeleccionado);
+        }
     }
 
     /**
@@ -304,6 +327,7 @@ public class SelectorMultple extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JToggleButton cmdAceptar;
     private javax.swing.JToggleButton cmdCancelar;
     private javax.swing.JFileChooser fcSelectorArchivo;
