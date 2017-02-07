@@ -16,16 +16,33 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 package com.mudracr.ui;
 
+import com.mudracr.ui.filtros.FiltroODF;
+import java.awt.Color;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+
 /**
  *
  * @author Adrián Alvarado Ramírez.
  */
 public class SelectorMultple extends javax.swing.JFrame {
 
+    private FiltroODF filtroODF;
+    private File archivoSeleccionado;
+
     /**
      * Creates new form SelectorMultple
      */
     public SelectorMultple() {
+        filtroODF = new FiltroODF();
         initComponents();
         this.setLocationRelativeTo(this);
     }
@@ -39,43 +56,84 @@ public class SelectorMultple extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        fcSelectorArchivo = new javax.swing.JFileChooser();
         lblRuta = new javax.swing.JLabel();
         txtRuta = new javax.swing.JTextField();
         btnBuscar = new javax.swing.JButton();
         btnAgregar = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        lblArchivos = new javax.swing.JLabel();
+        cmdAceptar = new javax.swing.JToggleButton();
+        cmdCancelar = new javax.swing.JToggleButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        listaArchivos = new javax.swing.JList<>();
+
+        fcSelectorArchivo.setDialogTitle("Selector de archivos ODF");
+        fcSelectorArchivo.setFileFilter(filtroODF);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Selección de Archivos");
-        setMinimumSize(new java.awt.Dimension(450, 269));
+        setMinimumSize(new java.awt.Dimension(596, 280));
 
         lblRuta.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         lblRuta.setForeground(new java.awt.Color(0, 102, 51));
         lblRuta.setText("Ruta:");
 
         txtRuta.setToolTipText("Ruta del archivo");
+        txtRuta.setNextFocusableComponent(btnBuscar);
+        txtRuta.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtRutaKeyPressed(evt);
+            }
+        });
 
         btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/mudracr/imagenes/Lupa_40x47.png"))); // NOI18N
+        btnBuscar.setMnemonic('b');
+        btnBuscar.setToolTipText("Alt + b");
+        btnBuscar.setNextFocusableComponent(btnAgregar);
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
 
         btnAgregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/mudracr/imagenes/Mas.png"))); // NOI18N
-        btnAgregar.setToolTipText("Agregar un documento");
+        btnAgregar.setMnemonic('g');
+        btnAgregar.setToolTipText("Alt + g");
         btnAgregar.setMaximumSize(new java.awt.Dimension(73, 55));
         btnAgregar.setMinimumSize(new java.awt.Dimension(73, 55));
+        btnAgregar.setNextFocusableComponent(cmdAceptar);
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAgregarActionPerformed(evt);
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 102, 51));
-        jLabel1.setText("Archivos:");
+        lblArchivos.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        lblArchivos.setForeground(new java.awt.Color(0, 102, 51));
+        lblArchivos.setText("Archivos:");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        cmdAceptar.setMnemonic('a');
+        cmdAceptar.setText("Aceptar");
+        cmdAceptar.setNextFocusableComponent(cmdCancelar);
+        cmdAceptar.setOpaque(true);
+        cmdAceptar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdAceptarActionPerformed(evt);
+            }
+        });
+
+        cmdCancelar.setMnemonic('c');
+        cmdCancelar.setText("Cancelar");
+        cmdCancelar.setNextFocusableComponent(txtRuta);
+        cmdCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdCancelarActionPerformed(evt);
+            }
+        });
+
+        listaArchivos.setModel(new DefaultListModel());
+        listaArchivos.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        jScrollPane1.setViewportView(listaArchivos);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -83,18 +141,25 @@ public class SelectorMultple extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1)
-                    .addComponent(lblRuta))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtRuta, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblArchivos)
+                            .addComponent(lblRuta))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtRuta, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(cmdAceptar)
+                        .addGap(3, 3, 3)
+                        .addComponent(cmdCancelar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -116,9 +181,13 @@ public class SelectorMultple extends javax.swing.JFrame {
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(lblArchivos)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmdAceptar)
+                    .addComponent(cmdCancelar))
                 .addContainerGap())
         );
 
@@ -126,8 +195,76 @@ public class SelectorMultple extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        // TODO add your handling code here:
+        agregarDocumento();
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void cmdAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdAceptarActionPerformed
+        JOptionPane.showMessageDialog(this, "Aceptar");
+    }//GEN-LAST:event_cmdAceptarActionPerformed
+
+    private void cmdCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCancelarActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_cmdCancelarActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        buscarDocumento();
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void txtRutaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRutaKeyPressed
+        archivoSeleccionado = null;
+    }//GEN-LAST:event_txtRutaKeyPressed
+
+    /**
+     * Permite buscar un documento en el sistema de archivos.
+     */
+    private void buscarDocumento() {
+        int resultado = fcSelectorArchivo.showOpenDialog(this);
+
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            archivoSeleccionado = fcSelectorArchivo.getSelectedFile();
+            txtRuta.setText(archivoSeleccionado.getAbsolutePath());
+            txtRuta.setToolTipText(txtRuta.getText());
+        }
+    }
+
+    /**
+     * Agrega un documento, ya sea que el usuario lo ingrese manualmente o que
+     * se haya escogido por el FileChooser.
+     */
+    private void agregarDocumento() {
+        File archivo = null;
+
+        if (archivoSeleccionado != null) {
+            archivo = archivoSeleccionado;
+            archivoSeleccionado = null;
+        } else {
+            String ruta = txtRuta.getText();
+            if (ruta != null && !(ruta = ruta.trim()).isEmpty()) {
+                archivo = new File(ruta);
+            }
+        }
+
+        if (archivo != null && archivo.exists() && archivo.canRead()) {
+            DefaultListModel modelo = (DefaultListModel) listaArchivos.getModel();
+            if (!verificarSiAgregado(modelo, archivo)) {
+                modelo.addElement(archivo);
+            }else{
+                JOptionPane.showMessageDialog(this, "El archivo ya fue agregado", "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No se puede agregar el archivo.\nVerifique que el archivo exista y que tiene privilegios de lectura", "Error al agregar el archivo", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public boolean verificarSiAgregado(DefaultListModel modelo, File archivoAComparar) {
+        for (int i = 0; i < modelo.getSize(); i++) {
+            File archivo = (File) modelo.getElementAt(i);
+            if (archivo.equals(archivoAComparar)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * @param args the command line arguments
@@ -167,10 +304,28 @@ public class SelectorMultple extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnBuscar;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JToggleButton cmdAceptar;
+    private javax.swing.JToggleButton cmdCancelar;
+    private javax.swing.JFileChooser fcSelectorArchivo;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JLabel lblArchivos;
     private javax.swing.JLabel lblRuta;
+    private javax.swing.JList<String> listaArchivos;
     private javax.swing.JTextField txtRuta;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the filtro
+     */
+    public FiltroODF getFiltro() {
+        return filtroODF;
+    }
+
+    /**
+     * @param filtro the filtro to set
+     */
+    public void setFiltro(FiltroODF filtro) {
+        this.filtroODF = filtro;
+    }
+
 }
